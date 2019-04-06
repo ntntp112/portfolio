@@ -36,7 +36,7 @@
         <div class="container-fluid">
             <div class="row row-offcanvas row-offcanvas-left">
                 <!--   *** SIDEBAR ***-->
-                <div id="sidebar" class="col-md-4 col-lg-3 sidebar-offcanvas">
+                <div id="sidebar" class="col-md-4 col-lg-3 sidebar-offcanvas d-print-none">
                     <div class="sidebar-content">
                         <h1 class="sidebar-heading"> <a href="index.html">Nathan,  Nguyen</a></h1>
                         <p class="sidebar-p">I am an Post-Baccalaureate student in Computer & Information Systems at Douglas College</p>
@@ -74,13 +74,118 @@
                                 <ul>
                                     <li><i>Posted on April 06, 2019</i></li>
                                 </ul>
+                                <p class="lead">
+                                    This Visualization is replicated from <a target="_blank" href="https://fivethirtyeight.com/features/every-guest-jon-stewart-ever-had-on-the-daily-show/">fivethirtyeight.com</a> using python.
+                                </p>
                                 <div id="main-slider" class="owl-carousel owl-theme">
                                     <div class="item"><img src="img/portfolio/20190406.png" alt="Visualization" class="img-fluid"></div>
                                 </div>
-                                <p>
-                                    This Visualization is replicated from <a target="_blank" href="https://fivethirtyeight.com/features/every-guest-jon-stewart-ever-had-on-the-daily-show/">fivethirtyeight.com</a> using python.
-                                </p>
+                                <br>
+                                <h3>How did I try to replicate this visualization?</h3>
 
+                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_1" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    Step 1: Load data
+                                </a>
+                                <div class="collapse" id="step_1">
+                                    <div class="card card-body">
+                                        <pre>
+import pandas as pd
+df = pd.read_csv('https://raw.githubusercontent.com/fivethirtyeight/data/master/daily-show-guests/daily_show_guests.csv')
+                                        </pre>
+                                    </div>
+                                </div>
+                                <br>
+                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_2" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                        Step 2: Insert new column to re-define display group
+                                    </a>
+                                <div class="collapse" id="step_2">
+                                    <div class="card card-body">
+                                        <pre>
+display_group = []
+
+for row in df['Group']:
+    # Media Group as m
+    if row in ['Media', 'media']:
+        display_group.append('m')
+    # Acting, Comedy and Music Group as acm 
+    elif row in ['Acting','Comedy','Musician']:
+        display_group.append('acm')
+    # Government and Politician as gp
+    elif row in ['Government','Politician','Political Aide']:
+        display_group.append('gp')
+    # Other to be filter out
+    else:
+        display_group.append('o')
+
+df['display_group'] = display_group
+                                        </pre>
+                                    </div>
+                                </div>
+                                <br>
+                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_3" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                        Step 3: Create group and calculate percentage of total then reset index
+                                    </a>
+                                <div class="collapse" id="step_3">
+                                    <div class="card card-body">
+                                        <pre>
+data_group = df.groupby(['display_group','YEAR']).agg({'Raw_Guest_List': 'count'})
+pot = data_group.groupby(level=1).apply(lambda x: x/x.sum()*100).reset_index()
+                                        </pre>
+                                    </div>
+                                </div>
+                                <br>
+                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_4" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                        Step 4: Filter data for each line and plot to visualization
+                                    </a>
+                                <div class="collapse" id="step_4">
+                                    <div class="card card-body">
+                                        <pre>
+plt.style.use("fivethirtyeight")
+
+# Get acm
+df_acm = pot[pot['display_group'] == 'acm']
+# Get media
+df_m = pot[pot['display_group'] == 'm']
+# Get gp
+df_gp = pot[pot['display_group'] == 'gp']
+
+# Configuration
+line_width = 2
+plt.axhline(y=0, color='black', linewidth=1)
+color = ['#7E2F8E','#0072BD','#D95319'];
+
+# label
+# m
+plt.text(x=2007.5, y=53, s='Media', fontsize=12, fontweight='bold',  color=color[0])
+# acm
+plt.text(x=2000.6, y=80, s='Acting, Comedy and Music', fontsize=12, fontweight='bold', color=color[1])
+# gp
+plt.text(x=2008.5, y=5, s='Government and Politics', fontsize=12, fontweight='bold',  color=color[2])
+
+# ticks
+plt.xticks(np.arange(np.round(pot.YEAR.min(),-3),pot.YEAR.max(),4),['2000','\'04','\'08','\'12','\'16'])
+plt.yticks(np.arange(0,105,25),['0','25','50','75','100%'])
+plt.ylim(-5,105)
+# title
+plt.text(x=pot.YEAR.min()-2.3, y=120, s='Who Got To Be On \'The Daily Show\'?', fontsize=18, fontweight='bold')
+plt.text(x=pot.YEAR.min()-2.3, y=110, s='Occupation of guests, by year', fontsize=14)
+
+# Footer
+plt.text(x=pot.YEAR.min()-2.4, y = -25, s = '©300306785-TrungNhan,Nguyen Source: fivethirtyeight.com',fontsize = 12, color = '#f0f0f0', backgroundcolor = 'grey')
+
+# Plot to visualization
+# m
+plt.plot(df_m['YEAR'], df_m['Raw_Guest_List'], linewidth=line_width, color=color[0])
+# acm
+plt.plot(df_acm['YEAR'], df_acm['Raw_Guest_List'], linewidth=line_width, color=color[1])
+# gp
+plt.plot(df_gp['YEAR'], df_gp['Raw_Guest_List'], linewidth=line_width, color=color[2])
+
+# Show
+plt.show()
+                                        </pre>
+                                    </div>
+                                </div>
                                 <!-- Cite -->
                                 <br>
                                 <p><b>Source: </b><a target="_blank" href="https://fivethirtyeight.com/features/every-guest-jon-stewart-ever-had-on-the-daily-show/">https://fivethirtyeight.com/features/every-guest-jon-stewart-ever-had-on-the-daily-show/</a></p>
