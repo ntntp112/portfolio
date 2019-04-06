@@ -83,7 +83,7 @@
                                 <br>
                                 <h3>How did I try to replicate this visualization?</h3>
 
-                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_1" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_1" role="button" aria-expanded="false" aria-controls="step_1">
                                     Step 1: Load data
                                 </a>
                                 <div class="collapse" id="step_1">
@@ -95,7 +95,7 @@ df = pd.read_csv('https://raw.githubusercontent.com/fivethirtyeight/data/master/
                                     </div>
                                 </div>
                                 <br>
-                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_2" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_2" role="button" aria-expanded="false" aria-controls="step_2">
                                         Step 2: Insert new column to re-define display group
                                     </a>
                                 <div class="collapse" id="step_2">
@@ -122,7 +122,7 @@ df['display_group'] = display_group
                                     </div>
                                 </div>
                                 <br>
-                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_3" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_3" role="button" aria-expanded="false" aria-controls="step_3">
                                         Step 3: Create group and calculate percentage of total then reset index
                                     </a>
                                 <div class="collapse" id="step_3">
@@ -134,7 +134,7 @@ pot = data_group.groupby(level=1).apply(lambda x: x/x.sum()*100).reset_index()
                                     </div>
                                 </div>
                                 <br>
-                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_4" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                <a class="btn btn-info mb-1" data-toggle="collapse" href="#step_4" role="button" aria-expanded="false" aria-controls="step_4">
                                         Step 4: Filter data for each line and plot to visualization
                                     </a>
                                 <div class="collapse" id="step_4">
@@ -186,6 +186,10 @@ plt.show()
                                         </pre>
                                     </div>
                                 </div>
+                                <br>
+                                <a class="btn btn-dark mb-1" target="_blank" href="https://colab.research.google.com/drive/15Iq-O8mbt1Cy3I2zof1eYrt5uvas0Foo" role="button">
+                                        View in Colaboratory
+                                    </a>
                                 <!-- Cite -->
                                 <br>
                                 <p><b>Source: </b><a target="_blank" href="https://fivethirtyeight.com/features/every-guest-jon-stewart-ever-had-on-the-daily-show/">https://fivethirtyeight.com/features/every-guest-jon-stewart-ever-had-on-the-daily-show/</a></p>
